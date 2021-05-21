@@ -33,17 +33,17 @@ public class BoardController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ResponseDto> getBoardById(@NotNull @PathVariable(value = "id") Long id) {
-    return boardService.getBydId(id);
+    return boardService.get(id);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<BoardDto> updateBoard(@Valid @NotNull @PathVariable(value = "id") Long id,
                                               @Valid @RequestBody BoardDto boardDto) {
-    return boardService.updateById(id, boardDto);
+    return boardService.update(id, boardDto);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Object> deletedBoard(@NotNull @PathVariable(value = "id") Long id) {
-    return boardService.deleteById(id);
+    return boardService.delete(id);
   }
 }

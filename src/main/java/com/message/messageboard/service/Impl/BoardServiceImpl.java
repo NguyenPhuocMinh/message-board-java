@@ -43,29 +43,33 @@ public class BoardServiceImpl implements BoardService {
     board.setUpdatedAt(new Date());
     board = boardRepository.save(board);
 
-    log.debug("Create board service end");
-
     ResponseDto response = new ResponseDto();
     response.setData(converter.entityToDto(board));
     response.setMessage("Đã đăng ký");
+
+    log.debug("Create board service end");
 
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<ResponseDto> getBydId(Long id) {
+  public ResponseEntity<ResponseDto> get(Long id) {
+    log.debug("Get board by id service start");
+
     Board board = boardRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Board not found"));
 
     ResponseDto response = new ResponseDto();
     response.setData(converter.entityToDto(board));
     response.setMessage("Successfully!");
 
+    log.debug("Get board by id service end");
+
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @Override
   public ResponseEntity<ResponsesDto> list(Integer skip, Integer limit, String sortBy, String orderBy) {
-    log.debug("Board list service implement begin");
+    log.debug("Board list service begin");
 
     int page = skip / 10;
     int size = limit - skip;
@@ -82,13 +86,16 @@ public class BoardServiceImpl implements BoardService {
     response.setResult(converter.entityToDtoList(result.getContent()));
     response.setTotal(totals);
 
-    log.debug("Board list service implement begin");
+    log.debug("Board list service end");
 
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<BoardDto> updateById(Long id, BoardDto boardDto) {
+  public ResponseEntity<BoardDto> update(Long id, BoardDto boardDto) {
+
+    log.debug("Update board by id service start");
+
     Optional<Board> board = boardRepository.findById(id);
 
     if (board.isPresent()) {
@@ -99,8 +106,11 @@ public class BoardServiceImpl implements BoardService {
       _board.setName(dto.getName());
       _board.setTitle(dto.getTitle());
       _board.setDescription(dto.getDescription());
+      _board.setUpdatedAt(new Date());
 
       Board response = boardRepository.save(_board);
+
+      log.debug("Update board by id service end");
 
       return new ResponseEntity<>(converter.entityToDto(response), HttpStatus.OK);
     } else {
@@ -109,9 +119,24 @@ public class BoardServiceImpl implements BoardService {
   }
 
   @Override
-  public ResponseEntity<Object> deleteById(Long id) {
-    boardRepository.deleteById(id);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  public ResponseEntity<Object> delete(Long id) {
+    log.debug("Delete board by id service begin");
+
+    Optional<Board> board = boardRepository.findById(id);
+
+    if (board.isPresent()) {
+      Board _board = board.get();
+      _board.setDeleted(true);
+      _board.setUpdatedAt(new Date());
+
+      Board response = boardRepository.save(_board);
+
+      log.debug("Delete board by id service end");
+
+      return new ResponseEntity<>(converter.entityToDto(response), HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
   }
 
   private Sort.Direction getOrderByDirect(String orderBy) {

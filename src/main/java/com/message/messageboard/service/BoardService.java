@@ -11,9 +11,9 @@ public interface BoardService {
 
   ResponseEntity<ResponseDto> create(BoardDto boardDto);
 
-  ResponseEntity<ResponseDto> getBydId(Long id);
+  ResponseEntity<ResponseDto> get(Long id);
 
-  ResponseEntity<BoardDto> updateById(Long id, BoardDto boardDto);
+  ResponseEntity<BoardDto> update(Long id, BoardDto boardDto);
 
-  ResponseEntity<Object> deleteById(Long id);
+  ResponseEntity<Object> delete(Long id);
 }
